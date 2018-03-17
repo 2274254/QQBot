@@ -1,18 +1,31 @@
 package com.binklac.qqbot;
 
 import com.binklac.qqbot.eventmanager.EventManager;
-import com.binklac.qqbot.events.GetQRCodeEvent;
-import com.binklac.qqbot.events.LoginEvent;
+import com.binklac.qqbot.events.*;
 import com.binklac.qqbot.protocol.login.LoginInfo;
-import com.binklac.qqbot.protocol.login.PasswordLogin;
-import com.binklac.qqbot.protocol.login.QRLogin;
+import com.binklac.qqbot.protocol.login.LoginManager;
+import com.binklac.qqbot.protocol.message.MessageManager;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.BasicCookieStore;
-import org.openqa.selenium.WebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QQBot {
-    private final EventManager eventManager = new EventManager();
+    private final static Logger logger = LoggerFactory.getLogger(QQBot.class);
+    private final EventManager eventManager = new EventManager(this);
     private final LoginInfo loginInfo = new LoginInfo();
+
+    private void registerInnerEvent() {
+        eventManager.registerEvent(GetQRCodeEvent.class, 1);
+        eventManager.registerEvent(LoginEvent.class, 2);
+        eventManager.registerEvent(FriendMessageEvent.class, 3);
+        eventManager.registerEvent(GroupMessageEvent.class, 4);
+        eventManager.registerEvent(DiscussMessageEvent.class, 5);
+    }
+
+    private void setDefaultEventHandler() {
+        eventManager.registerEventHandler(new QQBotDefaultEventHandler());
+    }
 
     private void initHttpClientContext() {
         HttpClientContext context = loginInfo.getHttpClientContext();
@@ -20,37 +33,20 @@ public class QQBot {
         loginInfo.setHttpClientContext(context);
     }
 
-    private boolean passwordLogin(QQBotConfig config) {
-        try {
-            System.setProperty(config.getWebDriverName(), config.getWebDriverPath());
-            WebDriver webDriver = (WebDriver) Class.forName(config.getWebDriverClass()).newInstance();
-            PasswordLogin login = new PasswordLogin(loginInfo, webDriver);
-            return login.login(config.getUin(), config.getPassword());
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
-            return false;
-        }
-    }
-
-    private boolean qrCodeLogin(QQBotConfig config) {
-        QRLogin login = new QRLogin(loginInfo);
-        return login.login(eventManager);
-    }
-
     public QQBot(QQBotConfig config) {
-        eventManager.registerEvent(GetQRCodeEvent.class, 1);
-        eventManager.registerEvent(LoginEvent.class, 2);
-
-        eventManager.registerEventHandler(new QQBotDefaultEventHandler());
-
+        registerInnerEvent();
+        setDefaultEventHandler();
         initHttpClientContext();
 
-
-        if (!(config.isUsePasswordLogin() ? passwordLogin(config) : qrCodeLogin(config))) {
+        if (!(config.isUsePasswordLogin() ? LoginManager.passwordLogin(loginInfo, config) : LoginManager.qrLogin(loginInfo, eventManager))) {
+            logger.error("登陆失败!");
             throw new RuntimeException("登录失败!");
         } else {
+            logger.info("登陆成功!登录帐号为 [" + loginInfo.getUin() + "]");
             eventManager.dispatchAsyncEvent(new LoginEvent(loginInfo.getUin()));
-
         }
+
+        new MessageManager(loginInfo, eventManager);
     }
 
     public static void main(String[] args) {
@@ -58,7 +54,5 @@ public class QQBot {
         config.setUsePasswordLogin(false);
 
         QQBot bot = new QQBot(config);
-
-
     }
 }

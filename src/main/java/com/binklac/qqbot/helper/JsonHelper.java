@@ -1,6 +1,7 @@
 package com.binklac.qqbot.helper;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 public class JsonHelper {
@@ -22,6 +23,10 @@ public class JsonHelper {
 
     public static JSONObject getJsonObjectFromString(String string) {
         return JSON.parseObject(string);
+    }
+
+    public static JSONArray getResultJsonArrayFromString(String string) {
+        return JSON.parseObject(string).getJSONArray("result");
     }
 
 }

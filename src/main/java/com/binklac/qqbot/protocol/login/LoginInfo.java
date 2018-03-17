@@ -7,8 +7,10 @@ public class LoginInfo {
     private HttpClientContext httpClientContext = HttpClientContext.create();
     private String ptWebQQ = null;
     private String vfWebQQ = null;
-    private String uin = null;
+    private Long uin = null;
     private String pSessionId = null;
+    private String qrScannedResult = null;
+    private String urlToGetPtWebQQ = null;
 
     public String getClientId() {
         return clientId;
@@ -38,19 +40,35 @@ public class LoginInfo {
         this.vfWebQQ = vfWebQQ;
     }
 
-    public String getUin() {
-        return uin;
-    }
-
-    public void setUin(String uin) {
-        this.uin = uin;
-    }
-
     public String getPSessionId() {
         return pSessionId;
     }
 
     public void setPSessionId(String pSessionId) {
         this.pSessionId = pSessionId;
+    }
+
+    public String getQrScannedResult() {
+        return qrScannedResult;
+    }
+
+    public void setQrScannedResult(String qrScannedResult) {
+        this.qrScannedResult = qrScannedResult;
+    }
+
+    public String getUrlToGetPtWebQQ() {
+        return urlToGetPtWebQQ;
+    }
+
+    public void setUrlToGetPtWebQQ(String urlToGetPtWebQQ) {
+        this.urlToGetPtWebQQ = urlToGetPtWebQQ;
+    }
+
+    public Long getUin() {
+        return uin;
+    }
+
+    public void setUin(Long uin) {
+        this.uin = uin;
     }
 }

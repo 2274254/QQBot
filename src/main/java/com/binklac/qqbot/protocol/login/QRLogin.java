@@ -5,12 +5,12 @@ import com.binklac.qqbot.eventmanager.EventManager;
 import com.binklac.qqbot.events.GetQRCodeEvent;
 import com.binklac.qqbot.helper.JsonHelper;
 import com.binklac.qqbot.helper.TimeoutCallable;
+import com.binklac.qqbot.helper.WebHelper;
 import com.binklac.qqbot.protocol.hash.QQHash;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -25,35 +25,18 @@ import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 public class QRLogin {
     private final static Logger logger = LoggerFactory.getLogger(QRLogin.class);
     private final LoginInfo loginInfo;
-    private String qrScannedResult = "";
-    private String urlToGetPtWebQQ = "";
 
-    private static byte[] ReadBinaryFromRespondWithSize(InputStream respondInputStream, long contentLength) throws IOException {
-        ByteBuffer respondByteBuffer = ByteBuffer.allocate((int) contentLength);
-        int availableSize;
-        while ((availableSize = respondInputStream.available()) != 0) {
-            byte[] tempBuffer = new byte[availableSize];
-            int realReadSize = respondInputStream.read(tempBuffer);
-            if (realReadSize > 0) {
-                respondByteBuffer.put(tempBuffer, 0, realReadSize);
-            }
-        }
-        return respondByteBuffer.array();
-    }
 
     private boolean getUinAndPsessionid() {
-        CloseableHttpClient httpClient = null;
         String url = "http://d1.web2.qq.com/channel/login2";
         String referer = "http://d1.web2.qq.com/proxy.html?v=20151105001&callback=1&id=2";
 
@@ -66,91 +49,50 @@ public class QRLogin {
         List<NameValuePair> parameter = new ArrayList<>();
         parameter.add(new BasicNameValuePair("r", r.toJSONString()));
 
-        try {
-            URI uri = new URIBuilder(url).build();
+        String responseString = WebHelper.getPostString(loginInfo, url, referer, parameter);
 
-            List<Header> headerList = new ArrayList<>();
-            headerList.add(new BasicHeader(HttpHeaders.REFERER, referer));
-            httpClient = HttpClients.custom().setDefaultHeaders(headerList).build();
-            HttpUriRequest httpUriRequest = RequestBuilder.post().setUri(uri).setEntity(new UrlEncodedFormEntity(parameter, "utf-8")).build();
-            HttpClientContext context = loginInfo.getHttpClientContext();
-
-            HttpResponse response = httpClient.execute(httpUriRequest, context);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
-            String responseString = reader.readLine();
-
-            if (JsonHelper.getRetcodeFromJsonString(responseString) == 0) {
-                JSONObject result = JsonHelper.getResultJsonObjectFromString(responseString);
-                loginInfo.setPSessionId(result.getString("psessionid"));
-                loginInfo.setUin(result.getString("uin"));
-                return true;
-            }
-        } catch (URISyntaxException | IOException e) {
+        if (responseString != null && JsonHelper.getRetcodeFromJsonString(responseString) == 0) {
+            JSONObject result = JsonHelper.getResultJsonObjectFromString(responseString);
+            loginInfo.setPSessionId(result.getString("psessionid"));
+            loginInfo.setUin(Long.parseLong(result.getString("uin")));
+            return true;
+        } else {
             return false;
-        } finally {
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException ignored) {
-                }
-            }
         }
 
-        return false;
+
     }
 
     private boolean getVfWebQQ() {
-        CloseableHttpClient httpClient = null;
         String url = "http://s.web2.qq.com/api/getvfwebqq?ptwebqq=" + loginInfo.getPtWebQQ() + "&clientid=53999199&psessionid=&t=0.1";
         String referer = "http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1";
-        try {
-            URI uri = new URIBuilder(url).build();
-            List<Header> headerList = new ArrayList<>();
-            headerList.add(new BasicHeader(HttpHeaders.REFERER, referer));
-            httpClient = HttpClients.custom().setDefaultHeaders(headerList).build();
-            HttpUriRequest httpUriRequest = RequestBuilder.get().setUri(uri).build();
-            HttpClientContext context = loginInfo.getHttpClientContext();
 
-            HttpResponse response = httpClient.execute(httpUriRequest, context);
-
-            String responseString = new String(ReadBinaryFromRespondWithSize(response.getEntity().getContent(), response.getEntity().getContentLength()));
-
-            String vfWebQQ = "";
-            if (JsonHelper.getRetcodeFromJsonString(responseString) == 0) {
-                vfWebQQ = JsonHelper.getResultJsonObjectFromString(responseString).getString("vfwebqq");
-            }
-
-            if (!vfWebQQ.isEmpty()) {
-                this.loginInfo.setVfWebQQ(vfWebQQ);
-                return true;
-            }
-
-            return false;
-        } catch (URISyntaxException | IOException e) {
-            return false;
-        } finally {
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException ignored) {
-                }
-            }
+        String responseString = WebHelper.getGetString(loginInfo, url, referer);
+        String vfWebQQ = "";
+        if (JsonHelper.getRetcodeFromJsonString(responseString) == 0) {
+            vfWebQQ = JsonHelper.getResultJsonObjectFromString(responseString).getString("vfwebqq");
         }
+
+        if (!vfWebQQ.isEmpty()) {
+            this.loginInfo.setVfWebQQ(vfWebQQ);
+            return true;
+        }
+
+        return false;
     }
 
     private boolean getPtWebQQ() {
         CloseableHttpClient httpClient = null;
         String referer = "http://s.web2.qq.com/proxy.html?v=20130916001&callback=1&id=1";
         try {
-            URI uri = new URIBuilder(urlToGetPtWebQQ).build();
+            URI uri = new URIBuilder(loginInfo.getUrlToGetPtWebQQ()).build();
             List<Header> headerList = new ArrayList<>();
             headerList.add(new BasicHeader(HttpHeaders.REFERER, referer));
             httpClient = HttpClients.custom().setDefaultHeaders(headerList).build();
             HttpUriRequest httpUriRequest = RequestBuilder.get().setUri(uri).build();
             HttpClientContext context = loginInfo.getHttpClientContext();
 
-            HttpResponse response = httpClient.execute(httpUriRequest, context);
+            httpClient.execute(httpUriRequest, context);
 
             context = loginInfo.getHttpClientContext();
             String ptWebQQ = "";
@@ -179,9 +121,10 @@ public class QRLogin {
     }
 
     private void processQRSucceedRespond() {
-        String[] succeedRespond = qrScannedResult.split(",");
-        String tempUrlToGetPtWebQQ = succeedRespond[2];
-        urlToGetPtWebQQ = tempUrlToGetPtWebQQ.substring(0, tempUrlToGetPtWebQQ.lastIndexOf("'")).substring(tempUrlToGetPtWebQQ.indexOf("'") + 1);
+        String[] succeedRespond = loginInfo.getQrScannedResult().split(",");
+        String urlToGetPtWebQQ = succeedRespond[2];
+        urlToGetPtWebQQ = urlToGetPtWebQQ.substring(0, urlToGetPtWebQQ.lastIndexOf("'")).substring(urlToGetPtWebQQ.indexOf("'") + 1);
+        loginInfo.setUrlToGetPtWebQQ(urlToGetPtWebQQ);
     }
 
 
@@ -222,7 +165,7 @@ public class QRLogin {
             } else if (result.contains("二维码已失效")) {
                 return QRStatus.Invalid;
             } else if (result.contains("登录成功")) {
-                qrScannedResult = result;
+                loginInfo.setQrScannedResult(result);
                 return QRStatus.LoginSuccess;
             } else {
                 return QRStatus.Unknown;
@@ -250,7 +193,7 @@ public class QRLogin {
             HttpUriRequest httpUriRequest = RequestBuilder.get().setUri(uri).build();
             HttpClientContext context = loginInfo.getHttpClientContext();
             HttpResponse response = httpClient.execute(httpUriRequest, context);
-            return ReadBinaryFromRespondWithSize(response.getEntity().getContent(), response.getEntity().getContentLength());
+            return WebHelper.ReadBinaryFromRespondWithSize(response.getEntity().getContent(), response.getEntity().getContentLength());
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
             return null;
@@ -265,12 +208,17 @@ public class QRLogin {
     }
 
     public boolean login(EventManager eventManager) {
+
+        logger.info("尝试获取二维码...");
         byte[] qrCodeBuffer = getQRCode();
         if (qrCodeBuffer == null) {
+            logger.error("尝试获取二维码失败!");
             return false;
         }
 
+        logger.info("检测二维码的有效性...");
         if (getQRCodeStatus() != QRStatus.WaitForScan) {
+            logger.error("二维码已经失效!");
             return false;
         }
 
@@ -289,23 +237,32 @@ public class QRLogin {
         }, 1000 * 60);
 
         try {
+            logger.info("等待二维码扫描...");
             if (!qrCodeStatusChecker.call()) {
+                logger.error("二维码在扫描时遇到异常!");
                 return false;
             }
         } catch (Exception e) {
+            logger.error("二维码在扫描时遇到异常!");
             return false;
         }
+
 
         processQRSucceedRespond();
 
+        logger.info("尝试获取PtWebQQ...");
         if (!getPtWebQQ()) {
+            logger.error("获取PtWebQQ遇到异常!");
             return false;
         }
 
+        logger.info("尝试获取VfWebQQ...");
         if (!getVfWebQQ()) {
+            logger.error("获取VfWebQQ遇到异常!");
             return false;
         }
 
+        logger.info("尝试获取Uin与Psessionid...");
         return getUinAndPsessionid();
     }
 

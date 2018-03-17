@@ -3,14 +3,14 @@ package com.binklac.qqbot.events;
 import com.binklac.qqbot.QQBotEvent;
 
 public class LoginEvent extends QQBotEvent {
-    private final String QQNumber;
+    private final Long QQNumber;
 
-    public LoginEvent(String qqNumber) {
+    public LoginEvent(Long qqNumber) {
         this.setEventCanCancel(false);
         QQNumber = qqNumber;
     }
 
-    public String getQQNumber() {
+    public Long getQQNumber() {
         return QQNumber;
     }
 }

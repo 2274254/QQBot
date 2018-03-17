@@ -1,5 +1,6 @@
 package com.binklac.qqbot.eventmanager;
 
+import com.binklac.qqbot.QQBot;
 import com.binklac.qqbot.QQBotEvent;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,9 +12,14 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class EventManager {
+    private final QQBot botInstance;
     private ConcurrentHashMap<Class, Integer> eventMap = new ConcurrentHashMap<>();
     private CopyOnWriteArrayList<EventHandlerInformation> eventHandlerList = new CopyOnWriteArrayList<>();
     private ThreadPoolExecutor eventExecutorPool = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() / 2, Runtime.getRuntime().availableProcessors(), 20, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+
+    public EventManager(QQBot botInstance) {
+        this.botInstance = botInstance;
+    }
 
     private List<EventHandlerInformation> searchEventHandlerForDispatch(Integer eventIdentity) {
         List<EventHandlerInformation> resultList = Collections.synchronizedList(new ArrayList<>());
@@ -80,7 +86,8 @@ public class EventManager {
             EventHandler eventHandlerMethodAnnotation = eventHandlerClassMethod.getAnnotation(EventHandler.class);
             Class<?>[] eventHandlerMethodParameterTypes = eventHandlerClassMethod.getParameterTypes();
 
-            if (eventHandlerMethodAnnotation != null && eventHandlerMethodParameterTypes.length == 1) {
+
+            if (eventHandlerMethodAnnotation != null && eventHandlerMethodParameterTypes.length == 2 && eventHandlerMethodParameterTypes[1].equals(QQBot.class)) {
                 for (Map.Entry<Class, Integer> event : eventMap.entrySet()) {
                     if (event.getKey().equals(eventHandlerMethodParameterTypes[0])) {
                         if (searchEventHandlerInHandlerClass(eventHandlerClass, event.getValue(), eventHandlerMethodAnnotation.Priority()).isEmpty()) {
@@ -102,7 +109,7 @@ public class EventManager {
                 try {
                     if (!event.isCancelled()) {
                         //TODO: 添加SlowEvent
-                        handler.getHandlerMethod().invoke(handler.getHandlerClassObject(), event);
+                        handler.getHandlerMethod().invoke(handler.getHandlerClassObject(), event, botInstance);
                     }
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
