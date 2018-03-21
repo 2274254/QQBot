@@ -49,7 +49,10 @@ public class WebHelper {
             HttpUriRequest httpUriRequest = RequestBuilder.get().setUri(uri).build();
             HttpClientContext context = loginInfo.getHttpClientContext();
             HttpResponse response = httpClient.execute(httpUriRequest, context);
-            return new String(ReadBinaryFromRespondWithSize(response.getEntity().getContent(), response.getEntity().getContentLength()));
+            //return new String(ReadBinaryFromRespondWithSize(response.getEntity().getContent(), response.getEntity().getContentLength()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+            return reader.readLine();
+
         } catch (URISyntaxException | IOException e) {
             return null;
         } finally {
@@ -114,6 +117,32 @@ public class WebHelper {
             URI uri = new URIBuilder(url).build();
             List<Header> headerList = new ArrayList<>();
             headerList.add(new BasicHeader(HttpHeaders.REFERER, referer));
+            httpClient = HttpClients.custom().setDefaultHeaders(headerList).build();
+            HttpUriRequest httpUriRequest = RequestBuilder.post().setUri(uri).setEntity(new UrlEncodedFormEntity(parameter, "utf-8")).build();
+            HttpClientContext context = loginInfo.getHttpClientContext();
+            HttpResponse response = httpClient.execute(httpUriRequest, context);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+            return reader.readLine();
+        } catch (URISyntaxException | IOException e) {
+            return null;
+        } finally {
+            if (httpClient != null) {
+                try {
+                    httpClient.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
+    public static String getPostString(LoginInfo loginInfo, String url, String referer, String origin, List<NameValuePair> parameter) {
+        CloseableHttpClient httpClient = null;
+
+        try {
+            URI uri = new URIBuilder(url).build();
+            List<Header> headerList = new ArrayList<>();
+            headerList.add(new BasicHeader(HttpHeaders.REFERER, referer));
+            headerList.add(new BasicHeader("Origin", origin));
             httpClient = HttpClients.custom().setDefaultHeaders(headerList).build();
             HttpUriRequest httpUriRequest = RequestBuilder.post().setUri(uri).setEntity(new UrlEncodedFormEntity(parameter, "utf-8")).build();
             HttpClientContext context = loginInfo.getHttpClientContext();

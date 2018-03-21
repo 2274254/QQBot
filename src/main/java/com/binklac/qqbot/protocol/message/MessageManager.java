@@ -7,6 +7,7 @@ import com.binklac.qqbot.events.DiscussMessageEvent;
 import com.binklac.qqbot.events.FriendMessageEvent;
 import com.binklac.qqbot.events.GroupMessageEvent;
 import com.binklac.qqbot.helper.JsonHelper;
+import com.binklac.qqbot.protocol.contacts.ContactsManager;
 import com.binklac.qqbot.protocol.login.LoginInfo;
 import com.binklac.qqbot.protocol.login.LoginManager;
 import com.binklac.qqbot.protocol.message.structure.DiscussMessage;
@@ -21,13 +22,15 @@ import java.net.URISyntaxException;
 public class MessageManager {
     private final static Logger logger = LoggerFactory.getLogger(MessageManager.class);
     private final EventManager eventManager;
+    private final ContactsManager contactsManager;
     private final LoginInfo loginInfo;
     private Thread dispatcherThread = null;
     private MessagePoller poller;
     private boolean stopPoll = true;
 
-    public MessageManager(LoginInfo loginInfo, EventManager eventManager, int threadPoolSize) throws UnsupportedEncodingException, URISyntaxException {
+    public MessageManager(LoginInfo loginInfo, EventManager eventManager, ContactsManager contactsManager, int threadPoolSize) throws UnsupportedEncodingException, URISyntaxException {
         this.eventManager = eventManager;
+        this.contactsManager = contactsManager;
         this.poller = new MessagePoller(loginInfo, threadPoolSize);
         this.loginInfo = loginInfo;
     }
@@ -72,8 +75,9 @@ public class MessageManager {
                     if (type.equalsIgnoreCase("message")) {
                         FriendMessage _message = new FriendMessage(message.getJSONObject("value"));
                         if (!_message.getMessage().isEmpty()) {
-                            logger.info("收到来自好友 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
-                            eventManager.dispatchAsyncEvent(new FriendMessageEvent(_message.getMessage(), _message.getSender(), _message.getTime()));
+                            String friendName = contactsManager.getFriendName(_message.getSender());
+                            logger.info("收到来自好友 [" + friendName + "] 的消息 -> " + _message.getMessage());
+                            eventManager.dispatchAsyncEvent(new FriendMessageEvent(_message.getMessage(), friendName, _message.getSender(), _message.getTime()));
                         }
                     } else if (type.equalsIgnoreCase("group_message")) {
                         GroupMessage _message = new GroupMessage(message.getJSONObject("value"));

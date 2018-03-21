@@ -2,6 +2,7 @@ package com.binklac.qqbot;
 
 import com.binklac.qqbot.eventmanager.EventManager;
 import com.binklac.qqbot.events.*;
+import com.binklac.qqbot.protocol.contacts.ContactsManager;
 import com.binklac.qqbot.protocol.login.LoginInfo;
 import com.binklac.qqbot.protocol.login.LoginManager;
 import com.binklac.qqbot.protocol.message.MessageManager;
@@ -18,6 +19,8 @@ public class QQBot {
     private final EventManager eventManager = new EventManager(this);
     private final LoginInfo loginInfo = new LoginInfo();
     private final MessageManager messageManager;
+    private final ContactsManager contactsManager;
+
     private void registerInnerEvent() {
         eventManager.registerEvent(GetQRCodeEvent.class, 1);
         eventManager.registerEvent(LoginEvent.class, 2);
@@ -49,8 +52,10 @@ public class QQBot {
             eventManager.dispatchAsyncEvent(new LoginEvent(loginInfo.getUin()));
         }
 
+        contactsManager = new ContactsManager(eventManager, loginInfo);
+        contactsManager.getFriendName(0L);
         try {
-            messageManager = new MessageManager(loginInfo, eventManager, config.getThreadPoolSize());
+            messageManager = new MessageManager(loginInfo, eventManager, contactsManager, config.getThreadPoolSize());
         } catch (UnsupportedEncodingException | URISyntaxException e) {
             logger.error("初始化失败!");
             throw new RuntimeException("初始化失败!");

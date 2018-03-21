@@ -11,6 +11,7 @@ import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.client.protocol.HttpClientContext;
@@ -98,7 +99,7 @@ public class QRLogin {
             String ptWebQQ = "";
             for (Cookie cookie : context.getCookieStore().getCookies()) {
                 if (cookie.getName().equalsIgnoreCase("ptwebqq")) {
-                    ptWebQQ = QQHash.BKNHash(cookie.getValue(), 0);
+                    ptWebQQ = cookie.getValue();
                 }
             }
 
@@ -207,6 +208,26 @@ public class QRLogin {
         }
     }
 
+    private void removeCookie(String cookieName) {
+        List<Cookie> newCookieList = new ArrayList<>();
+        HttpClientContext context = loginInfo.getHttpClientContext();
+        CookieStore store = context.getCookieStore();
+        for (Cookie cookie : store.getCookies()) {
+            if (!cookie.getName().equalsIgnoreCase(cookieName)) {
+                newCookieList.add(cookie);
+            }
+        }
+
+        store.clear();
+
+        for (Cookie cookie : newCookieList) {
+            store.addCookie(cookie);
+        }
+
+        context.setCookieStore(store);
+        loginInfo.setHttpClientContext(context);
+    }
+
     public boolean login(EventManager eventManager) {
 
         logger.info("尝试获取二维码...");
@@ -255,6 +276,7 @@ public class QRLogin {
             logger.error("获取PtWebQQ遇到异常!");
             return false;
         }
+
 
         logger.info("尝试获取VfWebQQ...");
         if (!getVfWebQQ()) {
