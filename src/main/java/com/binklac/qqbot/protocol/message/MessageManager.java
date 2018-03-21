@@ -26,9 +26,9 @@ public class MessageManager {
     private MessagePoller poller;
     private boolean stopPoll = true;
 
-    public MessageManager(LoginInfo loginInfo, EventManager eventManager) throws UnsupportedEncodingException, URISyntaxException {
+    public MessageManager(LoginInfo loginInfo, EventManager eventManager, int threadPoolSize) throws UnsupportedEncodingException, URISyntaxException {
         this.eventManager = eventManager;
-        this.poller = new MessagePoller(loginInfo);
+        this.poller = new MessagePoller(loginInfo, threadPoolSize);
         this.loginInfo = loginInfo;
     }
 
@@ -71,16 +71,22 @@ public class MessageManager {
 
                     if (type.equalsIgnoreCase("message")) {
                         FriendMessage _message = new FriendMessage(message.getJSONObject("value"));
-                        logger.info("收到来自好友 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
-                        eventManager.dispatchAsyncEvent(new FriendMessageEvent(_message.getMessage(), _message.getSender(), _message.getTime()));
+                        if (!_message.getMessage().isEmpty()) {
+                            logger.info("收到来自好友 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
+                            eventManager.dispatchAsyncEvent(new FriendMessageEvent(_message.getMessage(), _message.getSender(), _message.getTime()));
+                        }
                     } else if (type.equalsIgnoreCase("group_message")) {
                         GroupMessage _message = new GroupMessage(message.getJSONObject("value"));
-                        logger.info("收到来自群 [" + _message.getGroup() + "] 的用户 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
-                        eventManager.dispatchAsyncEvent(new GroupMessageEvent(_message.getMessage(), _message.getGroup(), _message.getSender(), _message.getTime()));
+                        if (!_message.getMessage().isEmpty()) {
+                            logger.info("收到来自群 [" + _message.getGroup() + "] 的用户 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
+                            eventManager.dispatchAsyncEvent(new GroupMessageEvent(_message.getMessage(), _message.getGroup(), _message.getSender(), _message.getTime()));
+                        }
                     } else if (type.equalsIgnoreCase("discu_message")) {
                         DiscussMessage _message = new DiscussMessage(message.getJSONObject("value"));
-                        logger.info("收到来自讨论组 [" + _message.getDiscuss() + "] 的用户 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
-                        eventManager.dispatchAsyncEvent(new DiscussMessageEvent(_message.getMessage(), _message.getDiscuss(), _message.getSender(), _message.getTime()));
+                        if (!_message.getMessage().isEmpty()) {
+                            logger.info("收到来自讨论组 [" + _message.getDiscuss() + "] 的用户 [" + _message.getSender() + "] 的消息 -> " + _message.getMessage());
+                            eventManager.dispatchAsyncEvent(new DiscussMessageEvent(_message.getMessage(), _message.getDiscuss(), _message.getSender(), _message.getTime()));
+                        }
                     }
                 }
                 return true;

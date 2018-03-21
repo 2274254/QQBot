@@ -42,8 +42,8 @@ public class MessagePoller {
     private final HttpClientContext context;
     private boolean isStartPoll = false;
 
-    public MessagePoller(LoginInfo loginInfo) throws URISyntaxException, UnsupportedEncodingException {
-        eventExecutorPool = new ThreadPoolExecutor(30, 30, 20, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
+    public MessagePoller(LoginInfo loginInfo, int threadPollSize) throws URISyntaxException, UnsupportedEncodingException {
+        eventExecutorPool = new ThreadPoolExecutor(threadPollSize, threadPollSize, 20, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         headerList.add(new BasicHeader(HttpHeaders.REFERER, referer));
         JSONObject r = new JSONObject();
         r.put("ptwebqq", loginInfo.getPtWebQQ());

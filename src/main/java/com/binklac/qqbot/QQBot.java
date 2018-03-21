@@ -50,7 +50,7 @@ public class QQBot {
         }
 
         try {
-            messageManager = new MessageManager(loginInfo, eventManager);
+            messageManager = new MessageManager(loginInfo, eventManager, config.getThreadPoolSize());
         } catch (UnsupportedEncodingException | URISyntaxException e) {
             logger.error("初始化失败!");
             throw new RuntimeException("初始化失败!");
@@ -62,7 +62,7 @@ public class QQBot {
     public static void main(String[] args) {
         QQBotConfig config = new QQBotConfig();
         config.setUsePasswordLogin(false);
-
+        config.setThreadPoolSize(40);
         QQBot bot = new QQBot(config);
     }
 }

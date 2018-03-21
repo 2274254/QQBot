@@ -5,8 +5,10 @@ public class QQBotConfig {
     private String webDriverClass = "org.openqa.selenium.chrome.ChromeDriver";
     private String webDriverName = "webdriver.chrome.driver";
     private String webDriverPath = "";
+    private int threadPoolSize = 30;
     private String uin = "";
     private String password = "";
+
 
     public boolean isUsePasswordLogin() {
         return usePasswordLogin;
@@ -54,5 +56,13 @@ public class QQBotConfig {
 
     public void setWebDriverClass(String webDriverClass) {
         this.webDriverClass = webDriverClass;
+    }
+
+    public int getThreadPoolSize() {
+        return threadPoolSize;
+    }
+
+    public void setThreadPoolSize(int threadPoolSize) {
+        this.threadPoolSize = threadPoolSize;
     }
 }
