@@ -10,6 +10,9 @@ import org.apache.http.impl.client.BasicCookieStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+
 public class QQBot {
     private final static Logger logger = LoggerFactory.getLogger(QQBot.class);
     private final EventManager eventManager = new EventManager(this);
@@ -46,7 +49,13 @@ public class QQBot {
             eventManager.dispatchAsyncEvent(new LoginEvent(loginInfo.getUin()));
         }
 
-        new MessageManager(loginInfo, eventManager);
+        try {
+            new MessageManager(loginInfo, eventManager, loginInfo);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {

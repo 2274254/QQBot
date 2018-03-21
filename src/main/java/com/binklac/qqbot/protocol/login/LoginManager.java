@@ -31,6 +31,7 @@ public class LoginManager {
             System.setProperty(config.getWebDriverName(), config.getWebDriverPath());
             WebDriver webDriver = (WebDriver) Class.forName(config.getWebDriverClass()).newInstance();
             PasswordLogin login = new PasswordLogin(loginInfo, webDriver);
+            loginInfo.setUin(Long.parseLong(config.getUin()));
             return login.login(config.getUin(), config.getPassword());
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
             return false;
