@@ -17,7 +17,7 @@ public class QQBot {
     private final static Logger logger = LoggerFactory.getLogger(QQBot.class);
     private final EventManager eventManager = new EventManager(this);
     private final LoginInfo loginInfo = new LoginInfo();
-
+    private final MessageManager messageManager;
     private void registerInnerEvent() {
         eventManager.registerEvent(GetQRCodeEvent.class, 1);
         eventManager.registerEvent(LoginEvent.class, 2);
@@ -50,12 +50,13 @@ public class QQBot {
         }
 
         try {
-            new MessageManager(loginInfo, eventManager, loginInfo);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+            messageManager = new MessageManager(loginInfo, eventManager);
+        } catch (UnsupportedEncodingException | URISyntaxException e) {
+            logger.error("初始化失败!");
+            throw new RuntimeException("初始化失败!");
         }
+
+        messageManager.beginMessagePoll();
     }
 
     public static void main(String[] args) {

@@ -26,10 +26,10 @@ public class MessageManager {
     private MessagePoller poller;
     private boolean stopPoll = true;
 
-    public MessageManager(LoginInfo loginInfo, EventManager eventManager, LoginInfo loginInfo1) throws UnsupportedEncodingException, URISyntaxException {
+    public MessageManager(LoginInfo loginInfo, EventManager eventManager) throws UnsupportedEncodingException, URISyntaxException {
         this.eventManager = eventManager;
         this.poller = new MessagePoller(loginInfo);
-        this.loginInfo = loginInfo1;
+        this.loginInfo = loginInfo;
     }
 
     public void beginMessagePoll() {
@@ -47,6 +47,7 @@ public class MessageManager {
                 }
             });
             poller.startPollMessage();
+            dispatcherThread.start();
         }
     }
 
