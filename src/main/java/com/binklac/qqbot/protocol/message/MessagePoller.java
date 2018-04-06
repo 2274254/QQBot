@@ -54,7 +54,7 @@ public class MessagePoller {
         parameter.add(new BasicNameValuePair("r", r.toJSONString()));
         URI uri = new URIBuilder(url).build();
         httpUriRequest = RequestBuilder.post().setUri(uri).setEntity(new UrlEncodedFormEntity(parameter, "utf-8")).build();
-        context = loginInfo.getHttpClientContext();
+        context = loginInfo.getHttpSession().getHttpClientContext();
     }
 
     private void pollMessage(CloseableHttpClient httpClient) throws Exception {

@@ -6,8 +6,6 @@ import com.binklac.qqbot.protocol.contacts.ContactsManager;
 import com.binklac.qqbot.protocol.login.LoginInfo;
 import com.binklac.qqbot.protocol.login.LoginManager;
 import com.binklac.qqbot.protocol.message.MessageManager;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.client.BasicCookieStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,18 +31,11 @@ public class QQBot {
         eventManager.registerEventHandler(new QQBotDefaultEventHandler());
     }
 
-    private void initHttpClientContext() {
-        HttpClientContext context = loginInfo.getHttpClientContext();
-        context.setCookieStore(new BasicCookieStore());
-        loginInfo.setHttpClientContext(context);
-    }
-
     public QQBot(QQBotConfig config) {
         registerInnerEvent();
         setDefaultEventHandler();
-        initHttpClientContext();
 
-        if (!(config.isUsePasswordLogin() ? LoginManager.passwordLogin(loginInfo, config) : LoginManager.qrLogin(loginInfo, eventManager))) {
+        if (!LoginManager.qrLogin(loginInfo, eventManager)) {
             logger.error("登陆失败!");
             throw new RuntimeException("登录失败!");
         } else {

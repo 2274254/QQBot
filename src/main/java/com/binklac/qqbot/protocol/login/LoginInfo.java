@@ -1,27 +1,62 @@
 package com.binklac.qqbot.protocol.login;
 
-import org.apache.http.client.protocol.HttpClientContext;
+import com.binklac.qqbot.helper.http.SimpleHttpSession;
 
 public class LoginInfo {
     private final String clientId = "53999199";
-    private HttpClientContext httpClientContext = HttpClientContext.create();
+    private SimpleHttpSession httpSession = new SimpleHttpSession();
     private String ptWebQQ = null;
     private String vfWebQQ = null;
     private Long uin = null;
     private String pSessionId = null;
-    private String qrScannedResult = null;
-    private String urlToGetPtWebQQ = null;
+    private String web2QrScannedResult = null;
+    private String web2UrlToGetPtWebQQ = null;
+
+    public String getpSessionId() {
+        return pSessionId;
+    }
+
+    public void setpSessionId(String pSessionId) {
+        this.pSessionId = pSessionId;
+    }
+
+    public String getWeb2QrScannedResult() {
+        return web2QrScannedResult;
+    }
+
+    public void setWeb2QrScannedResult(String web2QrScannedResult) {
+        this.web2QrScannedResult = web2QrScannedResult;
+    }
+
+    public String getWeb2UrlToGetPtWebQQ() {
+        return web2UrlToGetPtWebQQ;
+    }
+
+    public void setWeb2UrlToGetPtWebQQ(String web2UrlToGetPtWebQQ) {
+        this.web2UrlToGetPtWebQQ = web2UrlToGetPtWebQQ;
+    }
+
+    public String getQunQrScannedResult() {
+        return qunQrScannedResult;
+    }
+
+    public void setQunQrScannedResult(String qunQrScannedResult) {
+        this.qunQrScannedResult = qunQrScannedResult;
+    }
+
+    public String getQunUrlToGetPtWebQQ() {
+        return qunUrlToGetPtWebQQ;
+    }
+
+    public void setQunUrlToGetPtWebQQ(String qunUrlToGetPtWebQQ) {
+        this.qunUrlToGetPtWebQQ = qunUrlToGetPtWebQQ;
+    }
+
+    private String qunQrScannedResult = null;
+    private String qunUrlToGetPtWebQQ = null;
 
     public String getClientId() {
         return clientId;
-    }
-
-    public HttpClientContext getHttpClientContext() {
-        return httpClientContext;
-    }
-
-    public void setHttpClientContext(HttpClientContext httpClientContext) {
-        this.httpClientContext = httpClientContext;
     }
 
     public String getPtWebQQ() {
@@ -48,27 +83,19 @@ public class LoginInfo {
         this.pSessionId = pSessionId;
     }
 
-    public String getQrScannedResult() {
-        return qrScannedResult;
-    }
-
-    public void setQrScannedResult(String qrScannedResult) {
-        this.qrScannedResult = qrScannedResult;
-    }
-
-    public String getUrlToGetPtWebQQ() {
-        return urlToGetPtWebQQ;
-    }
-
-    public void setUrlToGetPtWebQQ(String urlToGetPtWebQQ) {
-        this.urlToGetPtWebQQ = urlToGetPtWebQQ;
-    }
-
     public Long getUin() {
         return uin;
     }
 
     public void setUin(Long uin) {
         this.uin = uin;
+    }
+
+    public SimpleHttpSession getHttpSession() {
+        return httpSession;
+    }
+
+    public void setHttpSession(SimpleHttpSession httpSession) {
+        this.httpSession = httpSession;
     }
 }
