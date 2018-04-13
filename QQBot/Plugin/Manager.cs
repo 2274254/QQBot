@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace QQBot.PluginsManager {
-    public class Manager {
+namespace QQBot.Plugin {
+    public class PluginsManager {
         Dictionary<PluginAttribute, object> pluginObjectMap = new Dictionary<PluginAttribute, object>();
 
         private bool IsSamePluginLoaded(PluginAttribute attribute) {

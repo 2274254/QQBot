@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace QQBot.PluginsManager {
+namespace QQBot.Plugin {
     public class PluginAttribute : Attribute {
         public string pluginName { get; }
         public string author { get; }

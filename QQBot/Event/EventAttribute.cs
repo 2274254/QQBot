@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QQBot.EventManager {
+namespace QQBot.Event {
     internal class EventAttribute : Attribute {
         private EventPriority priority { get; }
 

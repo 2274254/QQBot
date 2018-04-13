@@ -6,4 +6,8 @@
     <StartupObject>QQBot.Program</StartupObject>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Packages\In\" />
+  </ItemGroup>
+
 </Project>

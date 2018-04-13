@@ -1,6 +1,4 @@
-﻿using QQBot.PluginsManager;
-using QQBot.Util;
-using System;
+﻿using System;
 
 namespace QQBot {
     class Program {
