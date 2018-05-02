@@ -14,34 +14,25 @@ namespace QQBot.Plugin {
             return false;
         }
 
-        public bool LoadPlugin(String pluginPath) {
+        public void LoadPlugin(String pluginPath) {
             var assembly = System.Reflection.Assembly.LoadFile(pluginPath);
+
             foreach (var type in assembly.GetTypes()) {
-                if (type.GetInterface("QQBot.PluginsManager.QQBotPlugin") == null) {
-                    break;
-                } else {
+                if (type.GetInterface("QQBot.PluginsManager.QQBotPlugin") != null) {
                     var attributes = Attribute.GetCustomAttributes(type);
-                    if (attributes.Length == 1 && !IsSamePluginLoaded((PluginAttribute)attributes[ 0 ])) {
+
+                    if (attributes.Length == 1 && !IsSamePluginLoaded((PluginAttribute)attributes[0])) {
                         var pluginObject = Activator.CreateInstance(type);
                         var piuginLoadMethodInfo = type.GetMethod("OnPluginLoad");
 
                         try {
-                            object result = piuginLoadMethodInfo.Invoke(pluginObject, new object[] { this });
-                            if (!(bool)result) { return false; }
-                        } catch (Exception) {
-                            return false;
-                        }
-
-                        lock (pluginObjectMap) {
-                            pluginObjectMap.Add((PluginAttribute)attributes[ 0 ], pluginObject);
-                        }
-
-                        return true;
+                            if ((bool)piuginLoadMethodInfo.Invoke(pluginObject, new object[] { this })) {
+                                this.pluginObjectMap.Add((PluginAttribute)attributes[0], pluginObject);
+                            }
+                        } catch (Exception) {}
                     }
                 }
             }
-            return false;
         }
-
     }
 }

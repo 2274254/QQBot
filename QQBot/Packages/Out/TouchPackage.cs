@@ -5,7 +5,7 @@ using QQBot.Account;
 using QQBot.Util;
 
 namespace QQBot.Packages.Out {
-    class TouchPackage : OutPackage {
+    public class TouchPackage : OutPackage {
         private byte[] PackageSign0825 = { 0x08, 0x25, 0x31, 0x01 };
         private byte[] UnknowPrivateData0 = { 0x00, 0x00, 0x00, 0x00, 0x03, 0x09, 0x00, 0x08, 0x00, 0x01 };
         private byte[] UnknowPrivateData1 = { 0x00, 0x02, 0x00, 0x36, 0x00, 0x12, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x14, 0x00, 0x1D, 0x01, 0x02, 0x00, 0x19 };
@@ -15,6 +15,7 @@ namespace QQBot.Packages.Out {
 
             this.AppendData(Package.Head);
             this.AppendData(Package.Version);
+            this.AppendData(this.PackageSign0825);
             this.AppendData(account.HexQQNumber);
             this.AppendData(Package.UnknowData01);
             this.AppendData(Package.Key0825);

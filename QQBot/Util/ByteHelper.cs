@@ -9,7 +9,7 @@ namespace QQBot.Util {
                 newArraylength += array.LongLength;
             }
 
-            var newArray = new byte[ newArraylength ];
+            var newArray = new byte[newArraylength];
             var copiedArraylength = 0L;
 
             foreach (var array in arrays) {
@@ -22,9 +22,15 @@ namespace QQBot.Util {
 
         public static byte[] GetRandomBytes(long length) {
             Random random = new Random();
-            var result = new byte[ length ];
+            var result = new byte[length];
             random.NextBytes(result);
             return result;
+        }
+
+        public static byte[] GetHexQQnumber(UInt32 QQNumber) {
+            var HexQQnumber = BitConverter.GetBytes(QQNumber);
+            Array.Reverse(HexQQnumber);
+            return HexQQnumber;
         }
     }
 }
