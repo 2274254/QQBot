@@ -1,28 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using QQBot.Packages;
+using System.Text;
+using ChatBot.Network.Interface;
 
-namespace QQBot.Network {
-    public delegate bool TypeReceiveCallback(byte[] data);
-    public delegate void TypeSendCallback(int sendSize);
-
-    public class AsyncUdpClient {
-        public TypeReceiveCallback ReceiveCallBack { set; private get; } = null;
-        public TypeSendCallback SendCallBack { set; private get; } = null;
-
+namespace ChatBot.Network.Raw.Udp {
+    public class AsyncUdpClient : IAsyncNetworkClient {
+        public TypeReceiveCallback ReceiveCallBack { get; set; }
+        public TypeSendCallback SendCallBack { get; set; }
 
         private IPEndPoint RemoteEndPoint;
         private UdpClient Client;
 
         public AsyncUdpClient(IPAddress remoteIpAddress, int remotePort, int localPort) {
             this.RemoteEndPoint = new IPEndPoint(remoteIpAddress, remotePort);
-            this.Client = new UdpClient(0);
-            BeginReceiveData();
+            this.Client = new UdpClient(localPort);
         }
 
-        public void SendData(OutPackage package) {
-            this.Client.BeginSend(package.PackageData, package.DataLength, this.RemoteEndPoint, new AsyncCallback(this.DefaultSendCallback), null);
+        public void SendData(IPackage Package) {
+            this.Client.BeginSend(Package.PackageData, Package.DataLength, this.RemoteEndPoint, new AsyncCallback(this.DefaultSendCallback), null);
         }
 
         public void DefaultSendCallback(IAsyncResult asyncResult) {
@@ -38,12 +35,20 @@ namespace QQBot.Network {
 
         public void DefaultReceiveCallback(IAsyncResult asyncResult) {
             if (asyncResult.IsCompleted) {
-                Byte[] receiveBytes = this.Client.EndReceive(asyncResult, ref this.RemoteEndPoint);
-                if (this.ReceiveCallBack == null) {
-                    this.ReceiveCallBack(receiveBytes);
+                Byte[] ReceiveBytes = this.Client.EndReceive(asyncResult, ref this.RemoteEndPoint);
+                if (this.ReceiveCallBack != null) {
+                    this.ReceiveCallBack(ReceiveBytes);
                     BeginReceiveData();
                 }
             }
+        }
+
+        public void Begin() {
+            BeginReceiveData();
+        }
+
+        public void Stop() {
+            this.Client.Close();
         }
     }
 }

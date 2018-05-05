@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace QQBot.Event {
-    class EventManager {
+namespace ChatBot.Account.Interface {
+    public interface IChatBotAccount {
     }
 }
+

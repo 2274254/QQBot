@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace QQBot.Network {
-    class PacketDispatcher {
+namespace ChatBot.Network {
+    class NetowrkManager {
     }
 }
