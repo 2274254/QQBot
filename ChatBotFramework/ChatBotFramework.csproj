@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Network\Http\**" />
+    <Compile Remove="Network\Raw\Tcp\**" />
+    <EmbeddedResource Remove="Network\Http\**" />
+    <EmbeddedResource Remove="Network\Raw\Tcp\**" />
+    <None Remove="Network\Http\**" />
+    <None Remove="Network\Raw\Tcp\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="Config\" />
+    <Folder Include="DataBase\" />
+  </ItemGroup>
+</Project>
