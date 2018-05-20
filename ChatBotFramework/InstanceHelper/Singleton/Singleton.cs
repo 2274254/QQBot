@@ -43,7 +43,7 @@ namespace ChatBotFramework.InstanceHelper.Singleton {
                     }
                 }
             }
-            return (T)TypeObjectMap.GetValueOrDefault(_Type);
+            return (T)TypeObjectMap[_Type];
         }
     }
 }

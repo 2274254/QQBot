@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using ChatBotFramework.Account.Interface;
+using ChatBotFramework.InstanceHelper.Singleton;
 using ChatBotFramework.Network.Interface;
 
 namespace ChatBotFramework.Network {
-    class AsyncNetworkManager {
+    public class AsyncNetworkManager : Singleton<AsyncNetworkManager> {
         private readonly Dictionary<IChatBotAccount, IAsyncNetworkClient> AccountClientMap = new Dictionary<IChatBotAccount, IAsyncNetworkClient>();
         public TypeReceiveCallback Dispatcher { private get; set; }
 
@@ -12,7 +13,7 @@ namespace ChatBotFramework.Network {
                 lock (this.AccountClientMap) {
                     this.AccountClientMap.Add(Account, Client);
                     this.AccountClientMap[Account].ReceiveCallBack = this.Dispatcher;
-                    this.AccountClientMap[Account].Begin(); 
+                    this.AccountClientMap[Account].Begin();
                 }
             } else {
                 lock (this.AccountClientMap) {

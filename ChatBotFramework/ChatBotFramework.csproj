@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <ApplicationIcon />
-    <StartupObject />
+    <StartupObject>ChatBotFramework.BotInstance</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Network\Http\**" />
@@ -15,7 +15,11 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Folder Include="Config\" />
     <Folder Include="DataBase\" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.2.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 </Project>
