@@ -1,10 +1,15 @@
-﻿using LibQQDecoder.Util;
+﻿using LibLogger;
+using LibQQDecoder.Packages.Exceptions;
+using LibQQDecoder.Util;
 using System;
 using System.Net;
 
 namespace LibQQDecoder.Packages.In {
     public class RedirectTouchReplyPackage : InPackage {
         public IPAddress RedirectTargetAddress { get; private set; }
+        public Byte[] HexLoginAddress { get; private set; }
+        public Byte[] HexLoginTime { get; private set; }
+        public Byte[] TouchToken { get; private set; }
 
         public Boolean NeedRedirect { get; private set; }
 
@@ -22,10 +27,17 @@ namespace LibQQDecoder.Packages.In {
                 this.RedirectTargetAddress = new IPAddress(IpAddress);
             } else if (DecodedData[0] == 0x00) {
                 this.NeedRedirect = false;
+                this.TouchToken = new Byte[56];
+                Array.ConstrainedCopy(DecodedData, 5, this.TouchToken, 0, 56);
+                this.HexLoginTime = new Byte[4];
+                Array.ConstrainedCopy(DecodedData, 67, this.HexLoginTime, 0, 4);
+                this.HexLoginAddress = new Byte[4];
+                Array.ConstrainedCopy(DecodedData, 71, this.HexLoginAddress, 0, 4);
             } else {
-                this.NeedRedirect = false;
+                var exception = new BadPackageException("unable to recognition magic " + DecodedData[0]);
+                Logger.Exception(exception);
+                throw exception;
             }
-
         }
     }
 }
