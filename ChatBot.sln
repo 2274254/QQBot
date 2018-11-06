@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2048
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatBot", "ChatBot\ChatBot.csproj", "{A61C0707-C3D6-4729-9860-720374597992}"
+	ProjectSection(ProjectDependencies) = postProject
+		{27C686CB-97C4-4D92-AF92-78299ACAB8EE} = {27C686CB-97C4-4D92-AF92-78299ACAB8EE}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibEvent", "LibEvent\LibEvent.csproj", "{27C686CB-97C4-4D92-AF92-78299ACAB8EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{918B8D85-AC6C-4B49-9D8B-0A175538F826}"
+	ProjectSection(ProjectDependencies) = postProject
+		{27C686CB-97C4-4D92-AF92-78299ACAB8EE} = {27C686CB-97C4-4D92-AF92-78299ACAB8EE}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibQQProtocol", "LibQQProtocol\LibQQProtocol.csproj", "{0E19AB86-2DC7-4E12-9E86-972DB02D7873}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibAsyncUDP", "LibAsyncUDP\LibAsyncUDP.csproj", "{9DC7E497-7A27-493B-A50C-31E374C3D43C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A61C0707-C3D6-4729-9860-720374597992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A61C0707-C3D6-4729-9860-720374597992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A61C0707-C3D6-4729-9860-720374597992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A61C0707-C3D6-4729-9860-720374597992}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27C686CB-97C4-4D92-AF92-78299ACAB8EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27C686CB-97C4-4D92-AF92-78299ACAB8EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27C686CB-97C4-4D92-AF92-78299ACAB8EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27C686CB-97C4-4D92-AF92-78299ACAB8EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{918B8D85-AC6C-4B49-9D8B-0A175538F826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{918B8D85-AC6C-4B49-9D8B-0A175538F826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{918B8D85-AC6C-4B49-9D8B-0A175538F826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{918B8D85-AC6C-4B49-9D8B-0A175538F826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E19AB86-2DC7-4E12-9E86-972DB02D7873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E19AB86-2DC7-4E12-9E86-972DB02D7873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E19AB86-2DC7-4E12-9E86-972DB02D7873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E19AB86-2DC7-4E12-9E86-972DB02D7873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DC7E497-7A27-493B-A50C-31E374C3D43C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DC7E497-7A27-493B-A50C-31E374C3D43C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DC7E497-7A27-493B-A50C-31E374C3D43C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DC7E497-7A27-493B-A50C-31E374C3D43C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4E352C4-2EA1-4B14-9019-28D648802D84}
+	EndGlobalSection
+EndGlobal

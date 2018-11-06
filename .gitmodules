@@ -1,0 +1,3 @@
+[submodule "LibEvent/ThirdPart/Lock-free-priority-queue"]
+	path = LibEvent/ThirdPart/Lock-free-priority-queue
+	url = https://github.com/SofiaGodovykh/Lock-free-priority-queue.git
